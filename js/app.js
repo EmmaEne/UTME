@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
         currentSubject: 'English',
         currentIndex: 0,
         answers: {}, // Stores: { subject: { questionId: answer } }
-        reviewFlags: {}, // Stores: { subject: { questionId: true/false } }
         timeRemaining: 2 * 60 * 60, // 2 hours in seconds
         examStarted: true
     };
@@ -19,10 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (savedState) {
         state = JSON.parse(savedState);
     } else {
-        // Initialize answer and review structures
+        // Initialize answer structures
         state.subjects.forEach(sub => {
             state.answers[sub] = {};
-            state.reviewFlags[sub] = {};
         });
     }
 
@@ -37,11 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         palette: document.getElementById('paletteGrid'),
         prevBtn: document.getElementById('prevBtn'),
         nextBtn: document.getElementById('nextBtn'),
-        reviewBtn: document.getElementById('reviewBtn'),
-        clearBtn: document.getElementById('clearBtn'),
         submitBtn: document.getElementById('submitBtn'),
-        confirmSubmitBtn: document.getElementById('confirmSubmitBtn'),
-        summaryContent: document.getElementById('summaryContent'),
         userRegHeader: document.getElementById('userRegHeader'),
         stripReg: document.getElementById('stripReg')
     };
@@ -107,22 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderQuestion();
     }
 
-    function clearAnswer() {
-        const questions = window.questionsData[state.currentSubject];
-        const q = questions[state.currentIndex];
-        delete state.answers[state.currentSubject][q.id];
-        saveState();
-        renderQuestion();
-    }
-
-    function toggleReview() {
-        const questions = window.questionsData[state.currentSubject];
-        const q = questions[state.currentIndex];
-        state.reviewFlags[state.currentSubject][q.id] = !state.reviewFlags[state.currentSubject][q.id];
-        saveState();
-        renderPalette();
-    }
-
     function renderPalette() {
         const questions = window.questionsData[state.currentSubject];
         elements.palette.innerHTML = '';
@@ -132,9 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let className = 'pal-btn';
             
             if (idx === state.currentIndex) className += ' current';
-            if (state.reviewFlags[state.currentSubject][q.id]) {
-                className += ' review';
-            } else if (state.answers[state.currentSubject][q.id]) {
+            if (state.answers[state.currentSubject][q.id]) {
                 className += ' answered';
             }
 
@@ -201,18 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    elements.clearBtn.onclick = clearAnswer;
-    elements.reviewBtn.onclick = toggleReview;
-
     elements.submitBtn.onclick = () => {
-        generateSummary();
-        const modal = new bootstrap.Modal(document.getElementById('summaryModal'));
-        modal.show();
-    };
-
-    elements.confirmSubmitBtn.onclick = () => {
-        const modal = bootstrap.Modal.getInstance(document.getElementById('summaryModal'));
-        modal.hide();
         const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
         confirmModal.show();
     };
@@ -222,28 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.removeItem('jambExamState');
         window.location.href = 'success.html';
     };
-
-    function generateSummary() {
-        let html = '<table class="summary-tbl">';
-        html += '<thead><tr><th>SUBJECT</th><th>TOTAL</th><th>ANSWERED</th><th>UNANSWERED</th><th>REVIEW</th></tr></thead><tbody>';
-        
-        state.subjects.forEach(sub => {
-            const total = window.questionsData[sub].length;
-            const answered = Object.keys(state.answers[sub]).length;
-            const review = Object.values(state.reviewFlags[sub]).filter(v => v).length;
-            
-            html += `<tr>
-                <td class="fw-bold">${sub.toUpperCase()}</td>
-                <td>${total}</td>
-                <td class="col-answered">${answered}</td>
-                <td class="col-unanswered">${total - answered}</td>
-                <td class="col-review">${review}</td>
-            </tr>`;
-        });
-        
-        html += '</tbody></table>';
-        elements.summaryContent.innerHTML = html;
-    }
 
     function autoSubmit() {
         alert("Time is up! Your examination will be submitted automatically.");
