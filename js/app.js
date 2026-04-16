@@ -5,7 +5,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Initial State
     let state = {
-        subjects: ['English', 'Mathematics', 'Physics', 'Chemistry'],
+        subjects: ['English', 'Biology', 'Physics', 'Chemistry'],
         currentSubject: 'English',
         currentIndex: 0,
         answers: {}, // Stores: { subject: { questionId: answer } }

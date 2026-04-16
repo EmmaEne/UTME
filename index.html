@@ -39,7 +39,7 @@
                     </svg>
                 </div>
                 <h2>UTME CBT Examination Portal</h2>
-                <div class="exam-year">2024 Unified Tertiary Matriculation Examination</div>
+                <div class="exam-year">2026 Unified Tertiary Matriculation Examination</div>
             </div>
             
             <div class="login-box-body">
@@ -65,7 +65,7 @@
             </div>
             
             <div class="login-footer">
-                &copy; 2024 Joint Admissions and Matriculation Board (JAMB). All rights reserved.
+                &copy; 2026 Joint Admissions and Matriculation Board (JAMB). All rights reserved.
             </div>
         </div>
     </div>
@@ -74,11 +74,15 @@
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const regNum = document.getElementById('regNumber').value.trim();
-            if (regNum) {
+            const validReg = '202662224846EH';
+            
+            if (regNum === validReg) {
                 sessionStorage.setItem('candidateReg', regNum);
                 window.location.href = 'verification.html';
             } else {
-                document.getElementById('errorMsg').style.display = 'block';
+                const errorDiv = document.getElementById('errorMsg');
+                errorDiv.innerText = 'Invalid Registration Number. Access denied.';
+                errorDiv.style.display = 'block';
             }
         });
     </script>
