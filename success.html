@@ -32,8 +32,12 @@
             </div>
             
             <div class="success-body text-center">
-                <div class="success-notice">
+                <div class="success-notice mb-3">
                     Thank you for participating in the 2026 Unified Tertiary Matriculation Examination.
+                </div>
+                <div class="text-muted" style="font-size:14px;">
+                    <div id="resReg">REG: N/A</div>
+                    <div id="resTime">Submitted at: N/A</div>
                 </div>
             </div>
 
@@ -43,15 +47,17 @@
         </div>
     </div>
 
+    <script src="js/candidates.js"></script>
     <script>
-        // Check if actually submitted
-        if(!sessionStorage.getItem('examFinished')) {
+        const regNum = sessionStorage.getItem('candidateReg');
+        const finishedKey = getExamFinishedStorageKey(regNum);
+
+        if (!regNum || !sessionStorage.getItem(finishedKey)) {
             window.location.href = 'index.html';
         }
 
-        const regNum = sessionStorage.getItem('candidateReg') || '77488392AB';
-        document.getElementById('resReg').innerText = regNum;
-        document.getElementById('resTime').innerText = new Date().toLocaleString();
+        document.getElementById('resReg').innerText = `REG: ${regNum}`;
+        document.getElementById('resTime').innerText = `Submitted at: ${new Date().toLocaleString()}`;
 
         function finish() {
             sessionStorage.clear();

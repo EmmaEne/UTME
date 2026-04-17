@@ -29,7 +29,7 @@
                 </div>
                 <div class="col-md-9">
                     <table class="info-tbl">
-                        <tr>
+                                <tr>
                             <td>Full Name</td>
                             <td id="dispName">AGBOR PATRA NYEN-OME</td>
                         </tr>
@@ -43,7 +43,7 @@
                         </tr>
                         <tr>
                             <td>Subject Combination</td>
-                            <td>Use of English, Physics, Biology, Chemistry</td>
+                            <td id="dispSubjectCombo">Use of English, Physics, Biology, Chemistry</td>
                         </tr>
                         <tr>
                             <td>Total Questions</td>
@@ -63,12 +63,20 @@
         </div>
     </div>
 
+    <script src="js/candidates.js"></script>
     <script>
         const regNum = sessionStorage.getItem('candidateReg');
-        if (!regNum) {
+        const profile = getCandidateProfile(regNum);
+
+        if (!profile) {
             window.location.href = 'index.html';
         } else {
-            document.getElementById('dispReg').innerText = `REG: ${regNum}`;
+            document.getElementById('dispReg').innerText = `REG: ${profile.reg}`;
+            document.getElementById('dispName').innerText = profile.fullName;
+            document.getElementById('dispExamNum').innerText = profile.examNumber;
+            document.getElementById('dispCentre').innerText = profile.examCentre;
+            document.getElementById('dispSubjectCombo').innerText = profile.subjectCombination;
+            document.querySelector('.cand-photo').src = profile.photo;
         }
     </script>
 </body>

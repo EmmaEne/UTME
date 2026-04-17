@@ -13,17 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         examStarted: true
     };
 
-    // Load state from sessionStorage if exists
-    const savedState = sessionStorage.getItem('jambExamState');
-    if (savedState) {
-        state = JSON.parse(savedState);
-    } else {
-        // Initialize answer structures
-        state.subjects.forEach(sub => {
-            state.answers[sub] = {};
-        });
-    }
-
     // DOM Elements
     const elements = {
         timer: document.getElementById('timerDisplay'),
@@ -36,14 +25,37 @@ document.addEventListener('DOMContentLoaded', () => {
         prevBtn: document.getElementById('prevBtn'),
         nextBtn: document.getElementById('nextBtn'),
         submitBtn: document.getElementById('submitBtn'),
+        userNameHeader: document.getElementById('userNameHeader'),
         userRegHeader: document.getElementById('userRegHeader'),
         stripReg: document.getElementById('stripReg')
     };
 
     // Set Candidate Info
-    const regNum = sessionStorage.getItem('candidateReg') || '77488392AB';
-    if(elements.userRegHeader) elements.userRegHeader.innerText = `REG: ${regNum}`;
-    if(elements.stripReg) elements.stripReg.innerText = `REG: ${regNum}`;
+    const regNum = sessionStorage.getItem('candidateReg');
+    const profile = getCandidateProfile(regNum);
+
+    if (!profile) {
+        window.location.href = 'index.html';
+        return;
+    }
+
+    if (elements.userNameHeader) elements.userNameHeader.innerText = profile.fullName;
+    if (elements.userRegHeader) elements.userRegHeader.innerText = `REG: ${profile.reg}`;
+    if (elements.stripReg) elements.stripReg.innerText = `REG: ${profile.reg}`;
+    if (document.getElementById('stripName')) document.getElementById('stripName').innerText = `CANDIDATE: ${profile.fullName}`;
+
+    const stateStorageKey = getExamStateStorageKey(profile.reg);
+
+    // Load state from sessionStorage if exists
+    const savedState = sessionStorage.getItem(stateStorageKey);
+    if (savedState) {
+        state = JSON.parse(savedState);
+    } else {
+        // Initialize answer structures
+        state.subjects.forEach(sub => {
+            state.answers[sub] = {};
+        });
+    }
 
     // --- Core Functions ---
 
@@ -152,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function saveState() {
-        sessionStorage.setItem('jambExamState', JSON.stringify(state));
+        sessionStorage.setItem(stateStorageKey, JSON.stringify(state));
     }
 
     function renderApp() {
@@ -183,8 +195,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.finalProcess = function() {
-        sessionStorage.setItem('examFinished', 'true');
-        sessionStorage.removeItem('jambExamState');
+        const finishedKey = getExamFinishedStorageKey(profile.reg);
+        sessionStorage.setItem(finishedKey, 'true');
+        sessionStorage.removeItem(stateStorageKey);
         window.location.href = 'success.html';
     };
 

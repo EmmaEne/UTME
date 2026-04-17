@@ -36,7 +36,7 @@
                 <form id="loginForm">
                     <div class="mb-3">
                         <label class="form-label-jamb">Registration Number</label>
-                        <input type="text" id="regNumber" class="input-jamb" placeholder="e.g. 202412345678AB" required autocomplete="off">
+                        <input type="text" id="regNumber" class="input-jamb" placeholder="e.g. 202612345678AB" required autocomplete="off">
                     </div>
 
                     <button type="submit" class="btn-jamb w-100">LOGIN TO START</button>
@@ -49,17 +49,18 @@
         </div>
     </div>
 
+    <script src="js/candidates.js"></script>
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const regNum = document.getElementById('regNumber').value.trim();
-            const validReg = '202662224846EH';
-            
-            if (regNum === validReg) {
-                sessionStorage.setItem('candidateReg', regNum);
+            const regNum = document.getElementById('regNumber').value.trim().toUpperCase();
+            const profile = getCandidateProfile(regNum);
+            const errorDiv = document.getElementById('errorMsg');
+
+            if (profile) {
+                sessionStorage.setItem('candidateReg', profile.reg);
                 window.location.href = 'verification.html';
             } else {
-                const errorDiv = document.getElementById('errorMsg');
                 errorDiv.innerText = 'Invalid Registration Number. Access denied.';
                 errorDiv.style.display = 'block';
             }
