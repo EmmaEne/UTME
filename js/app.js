@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (elements.userRegHeader) elements.userRegHeader.innerText = `REG: ${profile.reg}`;
     if (elements.stripReg) elements.stripReg.innerText = `REG: ${profile.reg}`;
     if (document.getElementById('stripName')) document.getElementById('stripName').innerText = `CANDIDATE: ${profile.fullName}`;
+    if (document.getElementById('examPassportPhoto')) document.getElementById('examPassportPhoto').src = profile.photo;
 
     const stateStorageKey = getExamStateStorageKey(profile.reg);
 
